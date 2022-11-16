@@ -188,3 +188,6 @@ class WeRead:
     def scan2html(self, book_url, save_at='.', show_output=True):
         html = self.get_html(book_url)
         self.download_html(html, save_at=save_at, show_output=show_output)
+
+    def scan2html2pdf(self, book_url, save_at = '', book_name=''):
+        pass
