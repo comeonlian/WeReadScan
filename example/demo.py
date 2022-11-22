@@ -28,4 +28,4 @@ print('Webdriver launched.')
 with WeRead(driver) as weread:
     weread.login() #? login for grab the whole book
     # weread.scan2html('https://weread.qq.com/web/reader/2c632ef071a486a92c60226kc81322c012c81e728d9d180')
-    weread.scan2html('https://weread.qq.com/web/reader/a9c32f40717db77aa9c9171kc81322c012c81e728d9d180')
+    weread.scan2html('https://weread.qq.com/web/reader/c6332ff07191463ac6344e4kecc32f3013eccbc87e4b62e')
