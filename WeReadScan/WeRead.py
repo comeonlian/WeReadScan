@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
+
 '''
 WeRead.py
 Copyright 2020 by Algebra-FUN
 ALL RIGHTS RESERVED.
 '''
-
+import pdfkit
 from matplotlib import pyplot as plt
 from PIL import Image
 from selenium.webdriver.common.by import By
@@ -46,6 +48,14 @@ class WeRead:
         self.debug_mode = debug
         self.patience = patience
         self.path = os.path.dirname(os.path.realpath(__file__))
+        self.options = {
+            'page-size': 'Letter',
+            'margin-top': '0.75in',
+            'margin-right': '0.75in',
+            'margin-bottom': '0.75in',
+            'margin-left': '0.75in',
+            'encoding': "UTF-8"
+        }
 
     def __enter__(self):
         return self
@@ -185,9 +195,14 @@ class WeRead:
             os_start_file(save_path)
         return save_path
 
-    def scan2html(self, book_url, save_at='.', show_output=True):
+    def scan2html(self, book_url, save_at='.', book_name='', show_output=True):
         html = self.get_html(book_url)
-        self.download_html(html, save_at=save_at, show_output=show_output)
+        save_path = self.download_html(html, save_at=save_at, book_name=book_name, show_output=show_output)
+        return save_path
 
-    def scan2html2pdf(self, book_url, save_at = '', book_name=''):
-        pass
+    def scan2html2pdf(self, book_name, book_url, save_at=''):
+        """
+        将微信读书电子书爬取生成PDF
+        """
+        save_path = self.scan2html(book_url=book_url, save_at=save_at, book_name=book_name)
+        pdfkit.from_file(save_path, f'${book_name}.pdf', options=self.options)
