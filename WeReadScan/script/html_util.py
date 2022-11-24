@@ -4,22 +4,36 @@
 # @FileName  : html_util.py
 # @Time      : 2022/11/22 19:21
 # @Author    : liang.lian
+import re
 
-from bs4 import BeautifulSoup
+pat = re.compile(r'<span data-wr-id="layout" data-wr-co="(\d+)">')
 
-html_content = '''
-<p data-wr-co="813" class="right-info"><span data-wr-id="layout" data-wr-co="835">陈</span><span data-wr-id="layout" data-wr-co="836">晓</span><span data-wr-id="layout" data-wr-co="837">优</span><span data-wr-id="layout" data-wr-co="838">v</span><span data-wr-id="layout" data-wr-co="839">n</span><span data-wr-id="layout" data-wr-co="840">.</span><span data-wr-id="layout" data-wr-co="841">p</span><span data-wr-id="layout" data-wr-co="842">y</span><span data-wr-id="layout" data-wr-co="843">作</span><span data-wr-id="layout" data-wr-co="844">者</span></p>
-'''.strip()
 
-soup = BeautifulSoup(html_content, 'html.parser')
-print('----- 处理前 -----')
-print(soup)
+def my_read_lines(file, newline):
+    '''
+	f 文件对象
+	newline 分隔符
+	'''
+    buf = ""
+    while True:
+        while newline in buf:  # 读取的内容包含了 分隔符
+            pos = buf.index(newline)
+            yield buf[:pos]
+            buf = buf[pos + len(newline):]  # yield出去的数据 要从buf中删除
+        chunk = file.read(4096)  # 每次读取4096长度的数据
 
-print('----- 删除 -----')
-content_div = soup.select('span')
-for content in content_div:
-    print(content.get_text())
-    
+        # 边界条件处理，当读取不到内容的时候，表示文件已经全部读完了
+        if not chunk:
+            yield buf
+            break
 
-print('----- 处理后 -----')
-print(soup)
+        # 将每次读取的内容拼接到 buf字符串中
+        buf = buf + chunk
+
+
+def format_html(from_path, save_path):
+    with open(from_path, 'r', encoding='utf-8') as f1, open(save_path, 'w', encoding='utf-8') as f2:
+        for line in my_read_lines(f1, '\n'):
+            result = pat.sub(r'', line).replace('</span>', r'')
+            f2.write(result)
+            f2.write('\r\n')

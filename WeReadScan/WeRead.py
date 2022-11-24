@@ -17,6 +17,8 @@ from .script import dir_check, os_start_file, clear_temp
 from time import sleep
 import os
 
+from .script.html_util import format_html
+
 
 class WeRead:
     """
@@ -48,14 +50,6 @@ class WeRead:
         self.debug_mode = debug
         self.patience = patience
         self.path = os.path.dirname(os.path.realpath(__file__))
-        self.options = {
-            'page-size': 'Letter',
-            'margin-top': '0.75in',
-            'margin-right': '0.75in',
-            'margin-bottom': '0.75in',
-            'margin-left': '0.75in',
-            'encoding': "UTF-8"
-        }
 
     def __enter__(self):
         return self
@@ -199,10 +193,3 @@ class WeRead:
         html = self.get_html(book_url)
         save_path = self.download_html(html, save_at=save_at, book_name=book_name, show_output=show_output)
         return save_path
-
-    def scan2html2pdf(self, book_name, book_url, save_at=''):
-        """
-        将微信读书电子书爬取生成PDF
-        """
-        save_path = self.scan2html(book_url=book_url, save_at=save_at, book_name=book_name)
-        pdfkit.from_file(save_path, f'${book_name}.pdf', options=self.options)

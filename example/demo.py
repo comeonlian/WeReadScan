@@ -11,24 +11,39 @@ from selenium.webdriver import Chrome, ChromeOptions
 
 from WeReadScan import WeRead
 
-# options
-chrome_options = ChromeOptions()
+if __name__ == '__main__':
+    pdfkit_options = {
+        'page-size': 'A4',
+        'margin-top': '0.5in',
+        'margin-bottom': '0.5in',
+        'margin-right': '0.75in',
+        'margin-left': '0.75in',
+        'encoding': "UTF-8",
+    }
+    
+    # options
+    chrome_options = ChromeOptions()
+    
+    # now you can choose headless or not
+    chrome_options.add_argument('--headless')
+    
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    chrome_options.add_argument('disable-infobars')
+    chrome_options.add_argument('log-level=3')
+    
+    # launch Webdriver
+    print('Webdriver launching...')
+    driver = Chrome(options=chrome_options)
+    print('Webdriver launched.')
+    
+    book_name = 'Python量化交易实战'
+    with WeRead(driver) as weread:
+        weread.login()  # ? login for grab the whole book
+        # weread.scan2html('https://weread.qq.com/web/reader/2c632ef071a486a92c60226kc81322c012c81e728d9d180')
+        save_path = weread.scan2html(book_url='https://weread.qq.com/web/reader/821327f0813ab6ea4g0167afkecc32f3013eccbc87e4b62e',
+                                     book_name=book_name+'_1', 
+                                     show_output=False)
 
-# now you can choose headless or not
-chrome_options.add_argument('--headless')
+    print('Download html file finish.', save_path)
 
-chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-chrome_options.add_argument('disable-infobars')
-chrome_options.add_argument('log-level=3')
-
-# launch Webdriver
-print('Webdriver launching...')
-driver = Chrome(options=chrome_options)
-print('Webdriver launched.')
-
-with WeRead(driver) as weread:
-    weread.login()  # ? login for grab the whole book
-    # weread.scan2html('https://weread.qq.com/web/reader/2c632ef071a486a92c60226kc81322c012c81e728d9d180')
-    weread.scan2html('https://weread.qq.com/web/reader/c6332ff07191463ac6344e4kecc32f3013eccbc87e4b62e')
-    # weread.scan2html2pdf('量化交易之路：用Python做股票量化分析',
-    #                     'https://weread.qq.com/web/reader/97c320a05e4e5c97c71df82kecc32f3013eccbc87e4b62e')
+    
